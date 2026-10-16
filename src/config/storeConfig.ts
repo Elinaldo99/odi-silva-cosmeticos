@@ -8,7 +8,7 @@ import { CartItem, Product, StoreConfig } from '../types';
  * Formato internacional: Código do País + DDD + Número (apenas dígitos).
  * Exemplo para o Brasil (DDD 11): "5511999998888"
  */
-export const WHATSAPP_NUMBER = "5511999998888";
+export const WHATSAPP_NUMBER = "5595991212176";
 
 export const STORE_CONFIG: StoreConfig = {
   whatsappNumber: WHATSAPP_NUMBER,
