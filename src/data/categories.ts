@@ -1,0 +1,73 @@
+import { Category } from '../types';
+
+export const CATEGORIES: Category[] = [
+  {
+    id: 'maquiagem',
+    nome: 'Maquiagem',
+    slug: 'maquiagem',
+    imagem: 'https://images.unsplash.com/photo-1596462502278-27bfdc403348?auto=format&fit=crop&w=800&q=80',
+    descricao: 'Bases, batons, gloss, blushes e paletas para valorizar seus traços',
+    destaque: true,
+  },
+  {
+    id: 'perfumes',
+    nome: 'Perfumes',
+    slug: 'perfumes',
+    imagem: 'https://images.unsplash.com/photo-1541643600914-78b084683601?auto=format&fit=crop&w=800&q=80',
+    descricao: 'Fragrâncias marcantes, delicadas e envolventes para todas as ocasiões',
+    destaque: true,
+  },
+  {
+    id: 'skincare',
+    nome: 'Skincare',
+    slug: 'skincare',
+    imagem: 'https://images.unsplash.com/photo-1570172619644-dfd03ed5d881?auto=format&fit=crop&w=800&q=80',
+    descricao: 'Cuidados faciais diários, séruns, hidratantes e protetores para um glow natural',
+    destaque: true,
+  },
+  {
+    id: 'cabelos',
+    nome: 'Cabelos',
+    slug: 'cabelos',
+    imagem: 'https://images.unsplash.com/photo-1527799820374-dcf8d9d4a388?auto=format&fit=crop&w=800&q=80',
+    descricao: 'Máscaras nutritivas, óleos capilares e finalizadores para fios sedosos',
+    destaque: true,
+  },
+  {
+    id: 'corpo-e-banho',
+    nome: 'Corpo e Banho',
+    slug: 'corpo-e-banho',
+    imagem: 'https://images.unsplash.com/photo-1540555700478-4be289fbecef?auto=format&fit=crop&w=800&q=80',
+    descricao: 'Hidratantes corporais, esfoliantes e óleos de banho com toque aveludado',
+  },
+  {
+    id: 'unhas',
+    nome: 'Unhas',
+    slug: 'unhas',
+    imagem: 'https://images.unsplash.com/photo-1604654894610-df63bc536371?auto=format&fit=crop&w=800&q=80',
+    descricao: 'Esmaltes de alta durabilidade, tratamentos e cuidados para unhas impecáveis',
+  },
+  {
+    id: 'acessorios',
+    nome: 'Acessórios',
+    slug: 'acessorios',
+    imagem: 'https://images.unsplash.com/photo-1522337360788-8b13dee7a37e?auto=format&fit=crop&w=800&q=80',
+    descricao: 'Pincéis profissionais, esponjas anatômicas e nécessaires elegantes',
+  },
+  {
+    id: 'kits-de-beleza',
+    nome: 'Kits de Beleza',
+    slug: 'kits-de-beleza',
+    imagem: 'https://images.unsplash.com/photo-1512496015851-a90fb38ba796?auto=format&fit=crop&w=800&q=80',
+    descricao: 'Combinações selecionadas perfeitas para presentear ou para sua rotina completa',
+    destaque: true,
+  },
+  {
+    id: 'ofertas',
+    nome: 'Ofertas',
+    slug: 'ofertas',
+    imagem: 'https://images.unsplash.com/photo-1516975080664-ed2fc6a32937?auto=format&fit=crop&w=800&q=80',
+    descricao: 'Preços especiais por tempo limitado em produtos selecionados',
+    destaque: true,
+  },
+];

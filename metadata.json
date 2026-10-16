@@ -1,0 +1,6 @@
+{
+  "name": "ODI SILVA COSMÉTICOS",
+  "description": "Loja virtual e catálogo moderno de cosméticos, maquiagem e skincare. Faça seu pedido diretamente pelo WhatsApp com praticidade e elegância.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
