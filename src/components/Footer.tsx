@@ -8,7 +8,7 @@ interface FooterProps {
 }
 
 export const Footer: React.FC<FooterProps> = ({ onNavigateToSection }) => {
-  const { whatsappNumber } = useCart();
+  const { whatsappNumber, openDeliveryModal } = useCart();
   const currentYear = 2026;
 
   const currentNumber = whatsappNumber || WHATSAPP_NUMBER;
@@ -129,6 +129,14 @@ export const Footer: React.FC<FooterProps> = ({ onNavigateToSection }) => {
                   className="hover:text-pink-400 transition-colors"
                 >
                   Contato & Atendimento
+                </button>
+              </li>
+              <li>
+                <button
+                  onClick={openDeliveryModal}
+                  className="text-pink-400 hover:text-pink-300 font-medium transition-colors flex items-center gap-1"
+                >
+                  <span>📍 Regras de Entregas (Roraima)</span>
                 </button>
               </li>
             </ul>
