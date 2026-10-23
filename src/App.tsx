@@ -16,6 +16,7 @@ import { FloatingWhatsApp } from './components/FloatingWhatsApp';
 import { AdminProductModal } from './components/AdminProductModal';
 import { AuthModal } from './components/AuthModal';
 import { ToastNotification } from './components/ToastNotification';
+import { DeliveryNoticeModal } from './components/DeliveryNoticeModal';
 
 const StoreContent: React.FC = () => {
   const { setSelectedCategory } = useCart();
@@ -108,6 +109,9 @@ const StoreContent: React.FC = () => {
 
       {/* Toast Feedback */}
       <ToastNotification />
+
+      {/* First-time Delivery Information Popup for Roraima */}
+      <DeliveryNoticeModal />
     </div>
   );
 };

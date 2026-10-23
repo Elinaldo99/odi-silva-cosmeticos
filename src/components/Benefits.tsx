@@ -1,13 +1,17 @@
 import React from 'react';
-import { Truck, HeartHandshake, Sparkles, Smartphone } from 'lucide-react';
+import { Truck, HeartHandshake, Sparkles, Smartphone, MapPin } from 'lucide-react';
+import { useCart } from '../context/CartContext';
 
 export const Benefits: React.FC = () => {
+  const { openDeliveryModal } = useCart();
+
   const benefits = [
     {
-      icon: Truck,
-      title: 'Entrega Segura',
-      description: 'Enviamos seu pedido com segurança para todo o Brasil',
+      icon: MapPin,
+      title: 'Entregas em Roraima',
+      description: 'Motoboy em Boa Vista e táxi para todo o interior do estado',
       color: 'bg-pink-50 text-pink-600 border-pink-200/80',
+      action: openDeliveryModal,
     },
     {
       icon: HeartHandshake,
@@ -38,7 +42,10 @@ export const Benefits: React.FC = () => {
             return (
               <div
                 key={idx}
-                className="flex items-center gap-4 p-4 rounded-2xl bg-[#FFF8F9] hover:bg-pink-50/70 border border-pink-100/80 transition-all duration-200 shadow-xs hover:shadow-sm group"
+                onClick={benefit.action}
+                className={`flex items-center gap-4 p-4 rounded-2xl bg-[#FFF8F9] hover:bg-pink-50/70 border border-pink-100/80 transition-all duration-200 shadow-xs hover:shadow-sm group ${
+                  benefit.action ? 'cursor-pointer hover:border-pink-300' : ''
+                }`}
               >
                 <div
                   className={`w-12 h-12 rounded-xl flex items-center justify-center shrink-0 border ${benefit.color} group-hover:scale-110 transition-transform`}

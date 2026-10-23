@@ -46,6 +46,12 @@ interface CartContextType {
   resetProductsToDefault: () => Promise<void>;
   isAdminOpen: boolean;
   setIsAdminOpen: (open: boolean) => void;
+
+  // Delivery / Shipping notice popup for Roraima
+  isDeliveryModalOpen: boolean;
+  setIsDeliveryModalOpen: (open: boolean) => void;
+  openDeliveryModal: () => void;
+  closeDeliveryModal: (dontShowAgain?: boolean) => void;
 }
 
 const CartContext = createContext<CartContextType | undefined>(undefined);
@@ -53,6 +59,7 @@ const CartContext = createContext<CartContextType | undefined>(undefined);
 const CART_STORAGE_KEY = 'odi_silva_cart_v1';
 const PRODUCTS_STORAGE_KEY = 'odi_silva_products_v1';
 const WHATSAPP_STORAGE_KEY = 'odi_silva_whatsapp_number';
+const DELIVERY_NOTICE_KEY = 'odi_silva_delivery_notice_v1';
 
 export const CartProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   // Cart state with localStorage
@@ -92,6 +99,38 @@ export const CartProvider: React.FC<{ children: React.ReactNode }> = ({ children
   const [searchQuery, setSearchQuery] = useState<string>('');
   const [notification, setNotification] = useState<string | null>(null);
   const [isAdminOpen, setIsAdminOpen] = useState<boolean>(false);
+  const [isDeliveryModalOpen, setIsDeliveryModalOpen] = useState<boolean>(false);
+
+  // Check if visitor has seen the Roraima delivery notice before
+  useEffect(() => {
+    try {
+      const hasSeen = localStorage.getItem(DELIVERY_NOTICE_KEY);
+      if (!hasSeen) {
+        // Trigger popup on first visit after a soft delay
+        const timer = setTimeout(() => {
+          setIsDeliveryModalOpen(true);
+        }, 650);
+        return () => clearTimeout(timer);
+      }
+    } catch (e) {
+      console.warn('Error reading delivery notice localStorage:', e);
+    }
+  }, []);
+
+  const openDeliveryModal = useCallback(() => {
+    setIsDeliveryModalOpen(true);
+  }, []);
+
+  const closeDeliveryModal = useCallback((dontShowAgain = true) => {
+    setIsDeliveryModalOpen(false);
+    if (dontShowAgain) {
+      try {
+        localStorage.setItem(DELIVERY_NOTICE_KEY, 'seen');
+      } catch (e) {
+        console.warn('Error saving delivery notice localStorage:', e);
+      }
+    }
+  }, []);
 
   // Function to load products from Supabase
   const loadProductsFromSupabase = useCallback(async () => {
@@ -401,6 +440,10 @@ export const CartProvider: React.FC<{ children: React.ReactNode }> = ({ children
         resetProductsToDefault,
         isAdminOpen,
         setIsAdminOpen,
+        isDeliveryModalOpen,
+        setIsDeliveryModalOpen,
+        openDeliveryModal,
+        closeDeliveryModal,
       }}
     >
       {children}

@@ -19,6 +19,7 @@ export const CartDrawer: React.FC = () => {
     subtotal,
     totalItems,
     whatsappNumber,
+    openDeliveryModal,
   } = useCart();
 
   if (!isCartOpen) return null;
@@ -186,9 +187,18 @@ export const CartDrawer: React.FC = () => {
                 <span>Subtotal dos produtos</span>
                 <span className="font-semibold text-stone-900">{formatCurrency(subtotal)}</span>
               </div>
-              <div className="flex justify-between text-stone-500">
-                <span>Frete</span>
-                <span className="text-emerald-700 font-medium">A combinar via WhatsApp</span>
+              <div className="flex justify-between items-center text-stone-500">
+                <span className="flex items-center gap-1.5">
+                  <span>Frete (Exclusivo Roraima)</span>
+                  <button
+                    type="button"
+                    onClick={openDeliveryModal}
+                    className="text-[10px] text-pink-600 underline hover:text-pink-700 font-semibold cursor-pointer"
+                  >
+                    Ver regras
+                  </button>
+                </span>
+                <span className="text-emerald-700 font-semibold">Motoboy / Táxi</span>
               </div>
               <div className="pt-2 border-t border-pink-200/80 flex justify-between items-baseline">
                 <span className="text-sm font-bold text-stone-900">Total do pedido:</span>

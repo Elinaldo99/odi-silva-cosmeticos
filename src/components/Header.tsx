@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { ShoppingBag, Menu, X, Search, Sparkles, Heart, Settings, User as UserIcon } from 'lucide-react';
+import { ShoppingBag, Menu, X, Search, Sparkles, Heart, Settings, User as UserIcon, MapPin } from 'lucide-react';
 import { useCart } from '../context/CartContext';
 import { useAuth } from '../context/AuthContext';
 import { STORE_CONFIG } from '../config/storeConfig';
@@ -9,7 +9,7 @@ interface HeaderProps {
 }
 
 export const Header: React.FC<HeaderProps> = ({ onNavigateToSection }) => {
-  const { totalItems, openCart, searchQuery, setSearchQuery, setIsAdminOpen } = useCart();
+  const { totalItems, openCart, searchQuery, setSearchQuery, setIsAdminOpen, openDeliveryModal } = useCart();
   const { user, profile, openAuthModal, isAdmin } = useAuth();
   const [isScrolled, setIsScrolled] = useState(false);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
@@ -40,11 +40,17 @@ export const Header: React.FC<HeaderProps> = ({ onNavigateToSection }) => {
   return (
     <>
       {/* Top promotional bar */}
-      <div className="bg-gradient-to-r from-pink-600 via-rose-500 to-pink-600 text-white text-xs py-1.5 px-4 text-center font-medium tracking-wide flex items-center justify-center gap-2">
-        <Sparkles className="w-3.5 h-3.5 text-amber-200 animate-pulse" />
-        <span>Frete seguro para todo o Brasil • Pedido fácil e rápido no WhatsApp 💗</span>
-        <Sparkles className="w-3.5 h-3.5 text-amber-200 animate-pulse hidden sm:inline" />
-      </div>
+      <button
+        type="button"
+        onClick={openDeliveryModal}
+        className="w-full bg-gradient-to-r from-pink-600 via-rose-500 to-pink-600 text-white text-[11px] sm:text-xs py-1.5 px-3 text-center font-medium tracking-wide flex items-center justify-center gap-1.5 sm:gap-2 hover:brightness-105 transition-all cursor-pointer shadow-xs"
+        title="Clique para ver regras de entregas e frete em Roraima"
+      >
+        <MapPin className="w-3.5 h-3.5 text-amber-200 animate-pulse shrink-0" />
+        <span className="truncate sm:overflow-visible">
+          <strong>Entregas em Roraima:</strong> Boa Vista (Motoboy) • Interior (Táxi) • <span className="underline decoration-pink-200 font-bold">Saiba mais</span>
+        </span>
+      </button>
 
       {/* Main Header */}
       <header
