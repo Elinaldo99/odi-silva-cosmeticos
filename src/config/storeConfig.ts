@@ -17,7 +17,7 @@ export const STORE_CONFIG: StoreConfig = {
   storeDescription:
     "Na Odi Silva Cosméticos, acreditamos que cuidar da beleza é também uma forma de cuidar de si. Trabalhamos para oferecer produtos de beleza selecionados, proporcionando praticidade, qualidade e uma experiência de compra especial para nossas clientes.",
   hours: "Segunda a Sábado, das 09h às 19h",
-  location: "Entregas em Boa Vista (motoboy) e envios para todo o estado de Roraima (táxi) 📍",
+  location: "Entregas em toda Boa Vista por motoboy e envios para todo o estado de Roraima de táxi (conforme o valor da taxa do taxista) 📍",
   instagramHandle: "@odisilvacosmeticos",
   facebookUrl: "https://facebook.com",
   tiktokUrl: "https://tiktok.com",

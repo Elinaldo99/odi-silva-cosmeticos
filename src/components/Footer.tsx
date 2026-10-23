@@ -171,9 +171,24 @@ export const Footer: React.FC<FooterProps> = ({ onNavigateToSection }) => {
               </li>
               <li className="flex items-start gap-3">
                 <MapPin className="w-4 h-4 text-pink-500 shrink-0 mt-0.5" />
-                <div>
+                <div className="space-y-1">
                   <span className="block font-semibold text-stone-200">Cidade / Região de Atendimento:</span>
-                  <span>{STORE_CONFIG.location}</span>
+                  <p className="text-xs text-pink-400 font-semibold">
+                    Entregas e envios apenas no Estado de Roraima (RR)
+                  </p>
+                  <p className="text-[11px] text-stone-400 leading-snug">
+                    🛵 <strong className="text-stone-300">Boa Vista:</strong> Entregas por toda a cidade via motoboy.
+                  </p>
+                  <p className="text-[11px] text-stone-400 leading-snug">
+                    🚕 <strong className="text-stone-300">Todo o Estado:</strong> Envios de táxi conforme o valor da taxa do taxista.
+                  </p>
+                  <button
+                    type="button"
+                    onClick={openDeliveryModal}
+                    className="text-[11px] text-pink-400 hover:text-pink-300 underline font-medium pt-0.5 flex items-center gap-1 cursor-pointer transition-colors"
+                  >
+                    <span>Ver aviso e detalhes de entrega</span>
+                  </button>
                 </div>
               </li>
             </ul>
