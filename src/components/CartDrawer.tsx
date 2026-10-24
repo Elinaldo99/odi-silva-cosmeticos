@@ -156,7 +156,8 @@ export const CartDrawer: React.FC = () => {
                           </span>
                           <button
                             onClick={() => updateQuantity(item.product.id, item.quantity + 1)}
-                            className="p-1 text-stone-600 hover:text-pink-600 transition-colors"
+                            disabled={typeof item.product.estoque === 'number' && item.quantity >= item.product.estoque}
+                            className="p-1 text-stone-600 hover:text-pink-600 disabled:opacity-30 disabled:cursor-not-allowed transition-colors"
                             aria-label="Aumentar quantidade"
                           >
                             <Plus className="w-3.5 h-3.5" />
@@ -169,6 +170,11 @@ export const CartDrawer: React.FC = () => {
                           <span className="text-sm font-bold text-pink-600">
                             {formatCurrency(itemSubtotal)}
                           </span>
+                          {typeof item.product.estoque === 'number' && item.quantity >= item.product.estoque && (
+                            <span className="text-[10px] text-amber-600 font-medium block">
+                              Máx. estoque
+                            </span>
+                          )}
                         </div>
                       </div>
                     </div>

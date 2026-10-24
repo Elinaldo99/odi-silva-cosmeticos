@@ -242,22 +242,46 @@ export const CartProvider: React.FC<{ children: React.ReactNode }> = ({ children
   };
 
   const addToCart = (product: Product, quantity = 1) => {
+    const maxStock = typeof product.estoque === 'number' ? product.estoque : 999;
+    if (maxStock <= 0) {
+      showNotification(`"${product.nome}" está esgotado!`);
+      return;
+    }
+
+    let reachedLimit = false;
+
     setCart((prevCart) => {
       const existingIndex = prevCart.findIndex((item) => item.product.id === product.id);
       if (existingIndex > -1) {
+        const currentQty = prevCart[existingIndex].quantity;
+        const newQty = Math.min(currentQty + quantity, maxStock);
+        if (newQty === currentQty) {
+          reachedLimit = true;
+          return prevCart;
+        }
+        if (currentQty + quantity > maxStock) {
+          reachedLimit = true;
+        }
         const updated = [...prevCart];
-        const newQty = updated[existingIndex].quantity + quantity;
         updated[existingIndex] = {
           ...updated[existingIndex],
           quantity: newQty,
         };
         return updated;
       } else {
-        return [...prevCart, { product, quantity }];
+        const clampedQty = Math.min(quantity, maxStock);
+        if (quantity > maxStock) {
+          reachedLimit = true;
+        }
+        return [...prevCart, { product, quantity: clampedQty }];
       }
     });
 
-    showNotification(`"${product.nome}" adicionado ao carrinho! 💗`);
+    if (reachedLimit) {
+      showNotification(`Limite de estoque atingido para "${product.nome}" (${maxStock} unid.)`);
+    } else {
+      showNotification(`"${product.nome}" adicionado ao carrinho! 💗`);
+    }
   };
 
   const removeFromCart = (productId: string) => {
@@ -271,9 +295,14 @@ export const CartProvider: React.FC<{ children: React.ReactNode }> = ({ children
       return;
     }
     setCart((prev) =>
-      prev.map((item) =>
-        item.product.id === productId ? { ...item, quantity } : item
-      )
+      prev.map((item) => {
+        if (item.product.id === productId) {
+          const maxStock = typeof item.product.estoque === 'number' ? item.product.estoque : 999;
+          const clampedQty = Math.min(quantity, maxStock);
+          return { ...item, quantity: clampedQty };
+        }
+        return item;
+      })
     );
   };
 

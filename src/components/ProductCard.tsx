@@ -42,12 +42,16 @@ export const ProductCard: React.FC<ProductCardProps> = ({ product }) => {
           )}
         </div>
 
-        {/* Stock warning if low */}
-        {product.estoque <= 10 && product.estoque > 0 && (
+        {/* Stock warning or out-of-stock badge */}
+        {product.estoque <= 0 ? (
+          <div className="absolute top-2.5 right-2.5 bg-red-600/90 text-white text-[10px] font-semibold px-2 py-0.5 rounded-full shadow-xs">
+            Esgotado
+          </div>
+        ) : product.estoque <= 10 ? (
           <div className="absolute top-2.5 right-2.5 bg-amber-500/90 text-white text-[10px] font-semibold px-2 py-0.5 rounded-full shadow-xs">
             Restam {product.estoque}
           </div>
-        )}
+        ) : null}
 
         {/* Quick View Button Hover Overlay */}
         <div className="absolute inset-0 bg-stone-900/15 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center gap-2 p-4">
@@ -123,10 +127,15 @@ export const ProductCard: React.FC<ProductCardProps> = ({ product }) => {
             <button
               id={`add-to-cart-${product.id}`}
               onClick={() => addToCart(product, 1)}
-              className="col-span-4 py-2.5 px-3 rounded-xl bg-pink-600 hover:bg-pink-700 text-white font-semibold text-xs tracking-wide transition-all shadow-xs hover:shadow-md flex items-center justify-center gap-1.5 active:scale-98"
+              disabled={product.estoque <= 0}
+              className={`col-span-4 py-2.5 px-3 rounded-xl font-semibold text-xs tracking-wide transition-all shadow-xs flex items-center justify-center gap-1.5 active:scale-98 ${
+                product.estoque <= 0
+                  ? 'bg-stone-200 text-stone-400 cursor-not-allowed'
+                  : 'bg-pink-600 hover:bg-pink-700 text-white hover:shadow-md'
+              }`}
             >
               <ShoppingBag className="w-3.5 h-3.5" />
-              <span>Adicionar ao Carrinho</span>
+              <span>{product.estoque <= 0 ? 'Esgotado' : 'Adicionar ao Carrinho'}</span>
             </button>
 
             <button
