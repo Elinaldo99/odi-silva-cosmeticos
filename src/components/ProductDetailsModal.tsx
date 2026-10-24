@@ -143,7 +143,7 @@ export const ProductDetailsModal: React.FC = () => {
               {/* Category & Badge */}
               <div className="flex items-center justify-between">
                 <span className="uppercase text-xs font-bold tracking-wider text-pink-600 bg-pink-50 px-2.5 py-1 rounded-md">
-                  {selectedProduct.categoria.replace('-', ' ')}
+                  {selectedProduct.categoria.replace(/-/g, ' ')}
                 </span>
                 {maxStock > 0 ? (
                   <span className="inline-flex items-center gap-1.5 text-xs text-emerald-700 bg-emerald-50 font-semibold px-2.5 py-1 rounded-full border border-emerald-200">

@@ -21,7 +21,9 @@ export const ProductGrid: React.FC = () => {
       if (searchQuery.trim()) {
         const query = searchQuery.toLowerCase();
         const matchesName = product.nome.toLowerCase().includes(query);
-        const matchesCategory = product.categoria.toLowerCase().includes(query);
+        const matchesCategory =
+          product.categoria.toLowerCase().includes(query) ||
+          product.categoria.replace(/-/g, ' ').toLowerCase().includes(query);
         const matchesDesc = product.descricao.toLowerCase().includes(query);
         if (!matchesName && !matchesCategory && !matchesDesc) {
           return false;

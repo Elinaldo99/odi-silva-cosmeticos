@@ -72,7 +72,7 @@ export const ProductCard: React.FC<ProductCardProps> = ({ product }) => {
           {/* Category & Rating */}
           <div className="flex items-center justify-between text-xs text-stone-500 mb-1.5">
             <span className="uppercase text-[10px] font-bold tracking-wider text-pink-600 bg-pink-50 px-2 py-0.5 rounded-md">
-              {product.categoria.replace('-', ' ')}
+              {product.categoria.replace(/-/g, ' ')}
             </span>
             {product.avaliacao && (
               <div className="flex items-center gap-1 text-stone-600 font-medium">

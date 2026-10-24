@@ -351,5 +351,64 @@ export const INITIAL_PRODUCTS: Product[] = [
       'Alta fixação resistente a bebidas'
     ],
     modo_de_uso: 'Deslize a bala do batom diretamente sobre os lábios contornando primeiro o arco do cupido.'
+  },
+  {
+    id: 'prod-13',
+    nome: 'Body Splash Desodorante Colônia Doce Encanto 200ml',
+    slug: 'body-splash-doce-encanto-200ml',
+    descricao: 'Bruma perfumada leve e refrescante com notas florais e baunilha suave para o corpo todo.',
+    descricao_completa: 'O Body Splash Doce Encanto Odi Silva Cosméticos proporciona sensação revigorante de frescor pós-banho a qualquer hora do dia. Com fragrância suave que mescla notas florais de lírio e peônia com um fundo doce e aveludado de baunilha, é a escolha ideal para o clima tropical.',
+    categoria: 'body-splash',
+    preco: 49.90,
+    preco_promocional: 39.90,
+    imagem: 'https://images.unsplash.com/photo-1616949755610-8c9bbc08f138?auto=format&fit=crop&w=800&q=80',
+    imagens: [
+      'https://images.unsplash.com/photo-1616949755610-8c9bbc08f138?auto=format&fit=crop&w=800&q=80',
+      'https://images.unsplash.com/photo-1594035910387-fea47794261f?auto=format&fit=crop&w=800&q=80'
+    ],
+    estoque: 20,
+    destaque: true,
+    mais_vendido: true,
+    oferta: true,
+    created_at: '2026-03-01T10:00:00Z',
+    volume_ou_peso: '200ml',
+    avaliacao: 4.9,
+    total_avaliacoes: 84,
+    beneficios: [
+      'Sensação instantânea de frescor pós-banho',
+      'Fragrância delicada que não sobrecarrega os sentidos',
+      'Fórmula leve para borrifar à vontade ao longo do dia',
+      'Frasco anatômico com borrifador em névoa ultrafina'
+    ],
+    modo_de_uso: 'Borrife generosamente por todo o corpo a uma distância de cerca de 15 cm após o banho ou sempre que sentir vontade de renovar seu perfume.'
+  },
+  {
+    id: 'prod-14',
+    nome: 'Body Splash Vanilla Glow Iluminador Corporal 200ml',
+    slug: 'body-splash-vanilla-glow-iluminador-200ml',
+    descricao: 'Fragrância envolvente de baunilha ambarada com micropartículas iluminadoras sutis.',
+    descricao_completa: 'Uma combinação irresistível de perfume suave e luminosidade delicada. O Body Splash Vanilla Glow traz notas quentes de baunilha combinadas a um brilho radiante que valoriza o colo, braços e pernas.',
+    categoria: 'body-splash',
+    preco: 54.90,
+    imagem: 'https://images.unsplash.com/photo-1547887537-6158d64c35b3?auto=format&fit=crop&w=800&q=80',
+    imagens: [
+      'https://images.unsplash.com/photo-1547887537-6158d64c35b3?auto=format&fit=crop&w=800&q=80',
+      'https://images.unsplash.com/photo-1588405748880-12d1d2a59f75?auto=format&fit=crop&w=800&q=80'
+    ],
+    estoque: 15,
+    destaque: true,
+    mais_vendido: false,
+    oferta: false,
+    created_at: '2026-03-05T14:20:00Z',
+    volume_ou_peso: '200ml',
+    avaliacao: 5.0,
+    total_avaliacoes: 47,
+    beneficios: [
+      'Micropartículas de brilho que realçam a pele',
+      'Aroma doce aconchegante de baunilha ambarada',
+      'Secagem rápida sem grudar',
+      'Perfeito para o dia a dia e passeios'
+    ],
+    modo_de_uso: 'Agite bem antes de usar para dispersar as partículas iluminadoras. Borrife a 15 cm da pele e aproveite a sensação perfumada e luminosa.'
   }
 ];

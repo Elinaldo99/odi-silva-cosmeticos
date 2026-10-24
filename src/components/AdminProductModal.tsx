@@ -41,6 +41,10 @@ const SAMPLE_COSMETIC_PHOTOS = [
     name: 'Perfume Elegance',
     url: 'https://images.unsplash.com/photo-1592945403244-b3fbafd7f539?auto=format&fit=crop&w=800&q=80',
   },
+  {
+    name: 'Body Splash',
+    url: 'https://images.unsplash.com/photo-1616949755610-8c9bbc08f138?auto=format&fit=crop&w=800&q=80',
+  },
 ];
 
 export const AdminProductModal: React.FC = () => {
@@ -421,7 +425,7 @@ export const AdminProductModal: React.FC = () => {
                     <div className="flex-1 min-w-0">
                       <div className="flex items-center gap-2">
                         <span className="text-[10px] uppercase font-bold tracking-wider text-pink-600 bg-pink-50 px-1.5 py-0.5 rounded">
-                          {p.categoria}
+                          {p.categoria.replace(/-/g, ' ')}
                         </span>
                         {p.oferta && (
                           <span className="text-[10px] font-bold text-white bg-pink-600 px-1.5 rounded">

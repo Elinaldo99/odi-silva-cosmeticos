@@ -18,6 +18,14 @@ export const CATEGORIES: Category[] = [
     destaque: true,
   },
   {
+    id: 'body-splash',
+    nome: 'Body Splash',
+    slug: 'body-splash',
+    imagem: 'https://images.unsplash.com/photo-1616949755610-8c9bbc08f138?auto=format&fit=crop&w=800&q=80',
+    descricao: 'Brumas perfumadas leves, refrescantes e revigorantes para prolongar a sensação pós-banho',
+    destaque: true,
+  },
+  {
     id: 'skincare',
     nome: 'Skincare',
     slug: 'skincare',
