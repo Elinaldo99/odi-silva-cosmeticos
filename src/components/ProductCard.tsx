@@ -1,7 +1,13 @@
 import React from 'react';
-import { ShoppingBag, Eye, Star, Flame } from 'lucide-react';
+import { ShoppingBag, Eye, Star, Flame, Share2 } from 'lucide-react';
 import { Product } from '../types';
-import { formatCurrency, calculateDiscountPercentage, getEffectivePrice } from '../config/storeConfig';
+import {
+  formatCurrency,
+  calculateDiscountPercentage,
+  getEffectivePrice,
+  getProductShareUrl,
+  getProductShareText,
+} from '../config/storeConfig';
 import { useCart } from '../context/CartContext';
 
 interface ProductCardProps {
@@ -9,9 +15,45 @@ interface ProductCardProps {
 }
 
 export const ProductCard: React.FC<ProductCardProps> = ({ product }) => {
-  const { addToCart, openProductDetails } = useCart();
+  const { addToCart, openProductDetails, showNotification } = useCart();
   const discount = calculateDiscountPercentage(product.preco, product.preco_promocional);
   const effectivePrice = getEffectivePrice(product);
+
+  const handleShare = async (e: React.MouseEvent) => {
+    e.stopPropagation();
+    const shareUrl = getProductShareUrl(product);
+    const shareText = getProductShareText(product);
+
+    if (typeof navigator !== 'undefined' && navigator.share) {
+      try {
+        await navigator.share({
+          title: `${product.nome} | Odi Silva Cosméticos`,
+          text: shareText,
+          url: shareUrl,
+        });
+        showNotification('Produto compartilhado com sucesso! ✨');
+        return;
+      } catch (err: any) {
+        if (err?.name === 'AbortError') return;
+      }
+    }
+
+    try {
+      if (navigator.clipboard && navigator.clipboard.writeText) {
+        await navigator.clipboard.writeText(shareUrl);
+      } else {
+        const input = document.createElement('input');
+        input.value = shareUrl;
+        document.body.appendChild(input);
+        input.select();
+        document.execCommand('copy');
+        document.body.removeChild(input);
+      }
+      showNotification('Link do produto copiado com sucesso! 🔗');
+    } catch {
+      showNotification('Não foi possível copiar o link.');
+    }
+  };
 
   return (
     <div
@@ -53,15 +95,23 @@ export const ProductCard: React.FC<ProductCardProps> = ({ product }) => {
           </div>
         ) : null}
 
-        {/* Quick View Button Hover Overlay */}
+        {/* Quick View & Share Button Hover Overlay */}
         <div className="absolute inset-0 bg-stone-900/15 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center gap-2 p-4">
           <button
             onClick={() => openProductDetails(product)}
-            className="px-4 py-2 rounded-xl bg-white/95 backdrop-blur-xs text-stone-800 hover:text-pink-600 hover:bg-white text-xs font-semibold shadow-md flex items-center gap-1.5 transform translate-y-2 group-hover:translate-y-0 transition-all duration-200"
+            className="px-3.5 py-2 rounded-xl bg-white/95 backdrop-blur-xs text-stone-800 hover:text-pink-600 hover:bg-white text-xs font-semibold shadow-md flex items-center gap-1.5 transform translate-y-2 group-hover:translate-y-0 transition-all duration-200 cursor-pointer"
             title="Ver detalhes completos do produto"
           >
             <Eye className="w-3.5 h-3.5" />
             <span>Ver Detalhes</span>
+          </button>
+          <button
+            onClick={handleShare}
+            className="p-2 rounded-xl bg-white/95 backdrop-blur-xs text-stone-800 hover:text-pink-600 hover:bg-white text-xs font-semibold shadow-md flex items-center justify-center transform translate-y-2 group-hover:translate-y-0 transition-all duration-200 cursor-pointer"
+            title="Compartilhar produto"
+            aria-label="Compartilhar produto"
+          >
+            <Share2 className="w-3.5 h-3.5" />
           </button>
         </div>
       </div>
@@ -123,28 +173,37 @@ export const ProductCard: React.FC<ProductCardProps> = ({ product }) => {
           </div>
 
           {/* Action Buttons */}
-          <div className="grid grid-cols-5 gap-2">
+          <div className="grid grid-cols-6 gap-1.5 sm:gap-2">
             <button
               id={`add-to-cart-${product.id}`}
               onClick={() => addToCart(product, 1)}
               disabled={product.estoque <= 0}
-              className={`col-span-4 py-2.5 px-3 rounded-xl font-semibold text-xs tracking-wide transition-all shadow-xs flex items-center justify-center gap-1.5 active:scale-98 ${
+              className={`col-span-4 py-2.5 px-2 sm:px-3 rounded-xl font-semibold text-xs tracking-wide transition-all shadow-xs flex items-center justify-center gap-1.5 active:scale-98 cursor-pointer ${
                 product.estoque <= 0
                   ? 'bg-stone-200 text-stone-400 cursor-not-allowed'
                   : 'bg-pink-600 hover:bg-pink-700 text-white hover:shadow-md'
               }`}
             >
-              <ShoppingBag className="w-3.5 h-3.5" />
-              <span>{product.estoque <= 0 ? 'Esgotado' : 'Adicionar ao Carrinho'}</span>
+              <ShoppingBag className="w-3.5 h-3.5 shrink-0" />
+              <span className="truncate">{product.estoque <= 0 ? 'Esgotado' : 'Adicionar'}</span>
             </button>
 
             <button
               onClick={() => openProductDetails(product)}
-              className="col-span-1 py-2.5 rounded-xl border border-pink-200 hover:bg-pink-50 text-stone-600 hover:text-pink-600 flex items-center justify-center transition-colors"
-              title="Ver detalhes"
-              aria-label="Ver detalhes"
+              className="col-span-1 py-2.5 rounded-xl border border-pink-200 hover:bg-pink-50 text-stone-600 hover:text-pink-600 flex items-center justify-center transition-colors cursor-pointer"
+              title="Ver detalhes do produto"
+              aria-label="Ver detalhes do produto"
             >
               <Eye className="w-4 h-4" />
+            </button>
+
+            <button
+              onClick={handleShare}
+              className="col-span-1 py-2.5 rounded-xl border border-pink-200 hover:bg-pink-50 text-stone-600 hover:text-pink-600 flex items-center justify-center transition-colors cursor-pointer"
+              title="Compartilhar produto"
+              aria-label="Compartilhar produto"
+            >
+              <Share2 className="w-4 h-4" />
             </button>
           </div>
         </div>

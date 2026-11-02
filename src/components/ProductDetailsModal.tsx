@@ -1,5 +1,17 @@
 import React, { useState, useEffect } from 'react';
-import { X, ShoppingBag, MessageCircle, Star, ShieldCheck, Truck, Sparkles, Check, ChevronRight } from 'lucide-react';
+import {
+  X,
+  ShoppingBag,
+  MessageCircle,
+  Star,
+  ShieldCheck,
+  Truck,
+  Sparkles,
+  Check,
+  ChevronRight,
+  Share2,
+  Copy,
+} from 'lucide-react';
 import { useCart } from '../context/CartContext';
 import { Product } from '../types';
 import {
@@ -7,12 +19,25 @@ import {
   calculateDiscountPercentage,
   getEffectivePrice,
   getWhatsAppDirectProductUrl,
+  getProductShareUrl,
+  getProductShareText,
+  getWhatsAppShareUrl,
 } from '../config/storeConfig';
 
 export const ProductDetailsModal: React.FC = () => {
-  const { selectedProduct, closeProductDetails, addToCart, products, openProductDetails, whatsappNumber } = useCart();
+  const {
+    selectedProduct,
+    closeProductDetails,
+    addToCart,
+    products,
+    openProductDetails,
+    whatsappNumber,
+    showNotification,
+  } = useCart();
   const [activeImage, setActiveImage] = useState<string>('');
   const [quantity, setQuantity] = useState<number>(1);
+  const [copied, setCopied] = useState<boolean>(false);
+  const [shareMenuOpen, setShareMenuOpen] = useState<boolean>(false);
 
   const maxStock = typeof selectedProduct?.estoque === 'number' ? selectedProduct.estoque : 99;
   const isOutOfStock = maxStock <= 0;
@@ -22,6 +47,8 @@ export const ProductDetailsModal: React.FC = () => {
       setActiveImage(selectedProduct.imagem);
       const stock = typeof selectedProduct.estoque === 'number' ? selectedProduct.estoque : 99;
       setQuantity(stock > 0 ? 1 : 0);
+      setCopied(false);
+      setShareMenuOpen(false);
       // Prevent body scroll when modal is open
       document.body.style.overflow = 'hidden';
     } else {
@@ -65,6 +92,61 @@ export const ProductDetailsModal: React.FC = () => {
     window.open(url, '_blank', 'noopener,noreferrer');
   };
 
+  const handleCopyLink = async () => {
+    if (!selectedProduct) return;
+    const url = getProductShareUrl(selectedProduct);
+    try {
+      if (navigator.clipboard && navigator.clipboard.writeText) {
+        await navigator.clipboard.writeText(url);
+      } else {
+        const input = document.createElement('input');
+        input.value = url;
+        document.body.appendChild(input);
+        input.select();
+        document.execCommand('copy');
+        document.body.removeChild(input);
+      }
+      setCopied(true);
+      showNotification('Link do produto copiado com sucesso! 🔗');
+      setTimeout(() => setCopied(false), 3000);
+    } catch (err) {
+      console.warn('Erro ao copiar link:', err);
+      showNotification('Não foi possível copiar o link.');
+    }
+  };
+
+  const handleWhatsAppShare = () => {
+    if (!selectedProduct) return;
+    const url = getWhatsAppShareUrl(selectedProduct);
+    window.open(url, '_blank', 'noopener,noreferrer');
+    showNotification('Abrindo WhatsApp para compartilhar... 💬');
+  };
+
+  const handleShareProduct = async () => {
+    if (!selectedProduct) return;
+    const shareUrl = getProductShareUrl(selectedProduct);
+    const shareText = getProductShareText(selectedProduct);
+
+    if (typeof navigator !== 'undefined' && navigator.share) {
+      try {
+        await navigator.share({
+          title: `${selectedProduct.nome} | Odi Silva Cosméticos`,
+          text: shareText,
+          url: shareUrl,
+        });
+        showNotification('Produto compartilhado com sucesso! ✨');
+        return;
+      } catch (err: any) {
+        if (err?.name === 'AbortError') {
+          return;
+        }
+        setShareMenuOpen((prev) => !prev);
+      }
+    } else {
+      setShareMenuOpen((prev) => !prev);
+    }
+  };
+
   const galleryImages =
     selectedProduct.imagens && selectedProduct.imagens.length > 0
       ? selectedProduct.imagens
@@ -82,15 +164,66 @@ export const ProductDetailsModal: React.FC = () => {
         className="relative bg-white w-full max-w-4xl rounded-3xl shadow-2xl overflow-hidden border border-pink-100 my-auto"
         onClick={(e) => e.stopPropagation()}
       >
-        {/* Close Button */}
-        <button
-          id="close-product-details-btn"
-          onClick={closeProductDetails}
-          className="absolute top-4 right-4 z-20 w-10 h-10 rounded-full bg-white/90 backdrop-blur-xs text-stone-700 hover:text-pink-600 hover:bg-white shadow-md flex items-center justify-center transition-all"
-          aria-label="Fechar modal de detalhes"
-        >
-          <X className="w-5 h-5" />
-        </button>
+        {/* Top Header Actions: Share & Close */}
+        <div className="absolute top-4 right-4 z-20 flex items-center gap-2">
+          {/* Share Button (Top Right) */}
+          <div className="relative">
+            <button
+              id="share-product-header-btn"
+              onClick={handleShareProduct}
+              className={`w-10 h-10 rounded-full bg-white/90 backdrop-blur-xs text-stone-700 hover:text-pink-600 hover:bg-white shadow-md flex items-center justify-center transition-all cursor-pointer ${
+                shareMenuOpen ? 'ring-2 ring-pink-500 text-pink-600 bg-white' : ''
+              }`}
+              title="Compartilhar produto"
+              aria-label="Compartilhar produto"
+            >
+              <Share2 className="w-4 h-4" />
+            </button>
+
+            {/* Floating Dropdown for Top Right Button (when menu is opened on desktop) */}
+            {shareMenuOpen && (
+              <div className="absolute right-0 mt-2 w-56 p-2 bg-white border border-pink-100 rounded-2xl shadow-2xl space-y-1.5 z-30 animate-in fade-in zoom-in-95 duration-150">
+                <div className="text-[11px] font-bold text-stone-500 uppercase tracking-wider px-2.5 py-1">
+                  Compartilhar produto
+                </div>
+                <button
+                  onClick={() => {
+                    handleWhatsAppShare();
+                    setShareMenuOpen(false);
+                  }}
+                  className="w-full flex items-center gap-2.5 px-3 py-2 rounded-xl hover:bg-emerald-50 text-stone-700 hover:text-emerald-700 text-xs font-medium transition-colors cursor-pointer text-left"
+                >
+                  <MessageCircle className="w-4 h-4 fill-emerald-600 text-emerald-600 shrink-0" />
+                  <span>Enviar no WhatsApp</span>
+                </button>
+                <button
+                  onClick={() => {
+                    handleCopyLink();
+                    setShareMenuOpen(false);
+                  }}
+                  className="w-full flex items-center gap-2.5 px-3 py-2 rounded-xl hover:bg-pink-50 text-stone-700 hover:text-pink-700 text-xs font-medium transition-colors cursor-pointer text-left"
+                >
+                  {copied ? (
+                    <Check className="w-4 h-4 text-emerald-600 shrink-0" />
+                  ) : (
+                    <Copy className="w-4 h-4 text-pink-600 shrink-0" />
+                  )}
+                  <span>{copied ? 'Link copiado!' : 'Copiar Link'}</span>
+                </button>
+              </div>
+            )}
+          </div>
+
+          {/* Close Button */}
+          <button
+            id="close-product-details-btn"
+            onClick={closeProductDetails}
+            className="w-10 h-10 rounded-full bg-white/90 backdrop-blur-xs text-stone-700 hover:text-pink-600 hover:bg-white shadow-md flex items-center justify-center transition-all cursor-pointer"
+            aria-label="Fechar modal de detalhes"
+          >
+            <X className="w-5 h-5" />
+          </button>
+        </div>
 
         <div className="p-6 sm:p-8 max-h-[88vh] overflow-y-auto">
           {/* Main Product Presentation Grid */}
@@ -303,6 +436,56 @@ export const ProductDetailsModal: React.FC = () => {
                     <MessageCircle className="w-4 h-4 fill-white" />
                     <span>{isOutOfStock ? 'Indisponível via WhatsApp' : 'Comprar pelo WhatsApp'}</span>
                   </button>
+                </div>
+
+                {/* Share Product Action */}
+                <div className="pt-1 space-y-2">
+                  <button
+                    id="modal-share-product-btn"
+                    onClick={handleShareProduct}
+                    className="w-full py-2.5 px-4 rounded-xl border border-pink-200 hover:border-pink-300 bg-pink-50/50 hover:bg-pink-100/60 text-stone-700 hover:text-pink-700 font-semibold text-xs tracking-wide flex items-center justify-center gap-2 transition-all active:scale-98 cursor-pointer"
+                  >
+                    {copied ? (
+                      <>
+                        <Check className="w-4 h-4 text-emerald-600" />
+                        <span className="text-emerald-700 font-bold">Link copiado com sucesso!</span>
+                      </>
+                    ) : (
+                      <>
+                        <Share2 className="w-4 h-4 text-pink-600" />
+                        <span>Compartilhar este produto</span>
+                      </>
+                    )}
+                  </button>
+
+                  {/* Quick Share Options (shown when shareMenuOpen is active) */}
+                  {shareMenuOpen && (
+                    <div className="p-3 bg-pink-50/40 border border-pink-200/80 rounded-2xl space-y-2 animate-in fade-in zoom-in-95 duration-150">
+                      <div className="text-[11px] font-bold text-stone-600 uppercase tracking-wider">
+                        Opções de Compartilhamento:
+                      </div>
+                      <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
+                        <button
+                          onClick={handleWhatsAppShare}
+                          className="flex items-center justify-center gap-2 py-2 px-3 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-semibold shadow-xs transition-colors cursor-pointer"
+                        >
+                          <MessageCircle className="w-3.5 h-3.5 fill-white" />
+                          <span>Enviar no WhatsApp</span>
+                        </button>
+                        <button
+                          onClick={handleCopyLink}
+                          className="flex items-center justify-center gap-2 py-2 px-3 rounded-xl bg-white hover:bg-pink-50 text-stone-800 text-xs font-semibold border border-pink-200 transition-colors cursor-pointer"
+                        >
+                          {copied ? (
+                            <Check className="w-3.5 h-3.5 text-emerald-600" />
+                          ) : (
+                            <Copy className="w-3.5 h-3.5 text-pink-600" />
+                          )}
+                          <span>{copied ? 'Link Copiado!' : 'Copiar Link'}</span>
+                        </button>
+                      </div>
+                    </div>
+                  )}
                 </div>
               </div>
 

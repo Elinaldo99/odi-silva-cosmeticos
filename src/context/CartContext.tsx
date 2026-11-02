@@ -315,13 +315,74 @@ export const CartProvider: React.FC<{ children: React.ReactNode }> = ({ children
   const closeCart = () => setIsCartOpen(false);
   const toggleCart = () => setIsCartOpen((prev) => !prev);
 
+  // Deep linking: read ?produto= or ?p= on initial load when products are available
+  useEffect(() => {
+    if (products.length > 0 && !selectedProduct) {
+      try {
+        const params = new URLSearchParams(window.location.search);
+        const prodParam = params.get('produto') || params.get('p');
+        if (prodParam) {
+          const matched = products.find(
+            (p) => p.id === prodParam || p.slug === prodParam
+          );
+          if (matched) {
+            setSelectedProduct(matched);
+          }
+        }
+      } catch (e) {
+        console.warn('Error reading URL params for product deep link:', e);
+      }
+    }
+  }, [products]);
+
+  // Sync browser URL when opening product details
   const openProductDetails = (product: Product) => {
     setSelectedProduct(product);
+    try {
+      const url = new URL(window.location.href);
+      url.searchParams.set('produto', product.id);
+      window.history.pushState({ modalOpen: true, productId: product.id }, '', url.toString());
+    } catch (e) {
+      console.warn('Error pushing history state:', e);
+    }
   };
 
+  // Sync browser URL when closing product details
   const closeProductDetails = () => {
     setSelectedProduct(null);
+    try {
+      const url = new URL(window.location.href);
+      if (url.searchParams.has('produto') || url.searchParams.has('p')) {
+        url.searchParams.delete('produto');
+        url.searchParams.delete('p');
+        window.history.replaceState({}, '', url.toString());
+      }
+    } catch (e) {
+      console.warn('Error replacing history state:', e);
+    }
   };
+
+  // Handle browser back and forward buttons
+  useEffect(() => {
+    const handlePopState = () => {
+      try {
+        const params = new URLSearchParams(window.location.search);
+        const prodParam = params.get('produto') || params.get('p');
+        if (!prodParam) {
+          setSelectedProduct(null);
+        } else {
+          const matched = products.find((p) => p.id === prodParam || p.slug === prodParam);
+          if (matched) setSelectedProduct(matched);
+        }
+      } catch (e) {
+        console.warn('Error on popstate handler:', e);
+      }
+    };
+
+    window.addEventListener('popstate', handlePopState);
+    return () => window.removeEventListener('popstate', handlePopState);
+  }, [products]);
+
 
   const totalItems = cart.reduce((total, item) => total + item.quantity, 0);
 

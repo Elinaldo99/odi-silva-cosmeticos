@@ -102,3 +102,31 @@ export function getWhatsAppInquiryUrl(customNumber?: string): string {
   const message = "Olá! Gostaria de mais informações sobre os produtos da Odi Silva Cosméticos.";
   return `https://wa.me/${number}?text=${encodeURIComponent(message)}`;
 }
+
+/**
+ * Retorna o link direto e público para compartilhar um produto específico
+ */
+export function getProductShareUrl(product: Product): string {
+  if (typeof window === 'undefined') return '';
+  const origin = window.location.origin;
+  const pathname = window.location.pathname;
+  return `${origin}${pathname}?produto=${encodeURIComponent(product.id)}`;
+}
+
+/**
+ * Cria a mensagem amigável de recomendação de produto para compartilhamento
+ */
+export function getProductShareText(product: Product): string {
+  const price = getEffectivePrice(product);
+  return `✨ Olha esse produto que encontrei na Odi Silva Cosméticos:\n\n*${product.nome}*\nPreço: ${formatCurrency(price)}`;
+}
+
+/**
+ * Cria o link do WhatsApp para compartilhar o produto diretamente com um contato
+ */
+export function getWhatsAppShareUrl(product: Product): string {
+  const shareUrl = getProductShareUrl(product);
+  const text = `${getProductShareText(product)}\n\nConfira todos os detalhes no link abaixo:\n${shareUrl}`;
+  return `https://api.whatsapp.com/send?text=${encodeURIComponent(text)}`;
+}
+
