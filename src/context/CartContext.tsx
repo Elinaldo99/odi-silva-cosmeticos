@@ -315,15 +315,17 @@ export const CartProvider: React.FC<{ children: React.ReactNode }> = ({ children
   const closeCart = () => setIsCartOpen(false);
   const toggleCart = () => setIsCartOpen((prev) => !prev);
 
-  // Deep linking: read ?produto= or ?p= on initial load when products are available
+  // Deep linking: read ?produto=, ?p= or pathname (/p/:id, /produto/:id) on initial load
   useEffect(() => {
     if (products.length > 0 && !selectedProduct) {
       try {
         const params = new URLSearchParams(window.location.search);
-        const prodParam = params.get('produto') || params.get('p');
+        const pathMatch = window.location.pathname.match(/^\/(?:p|produto)\/([^/]+)/);
+        const prodFromPath = pathMatch ? decodeURIComponent(pathMatch[1]) : null;
+        const prodParam = params.get('produto') || params.get('p') || prodFromPath;
         if (prodParam) {
           const matched = products.find(
-            (p) => p.id === prodParam || p.slug === prodParam
+            (p) => p.id === prodParam || p.slug === prodParam || p.id.toLowerCase() === prodParam.toLowerCase()
           );
           if (matched) {
             setSelectedProduct(matched);
@@ -334,6 +336,36 @@ export const CartProvider: React.FC<{ children: React.ReactNode }> = ({ children
       }
     }
   }, [products]);
+
+  // Update document title and Open Graph tags when product details modal is open
+  useEffect(() => {
+    if (selectedProduct) {
+      const price = selectedProduct.preco_promocional && selectedProduct.preco_promocional > 0
+        ? selectedProduct.preco_promocional
+        : selectedProduct.preco;
+      const formatted = price.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' });
+      document.title = `${selectedProduct.nome} • ${formatted} | ODI SILVA COSMÉTICOS`;
+
+      const setMeta = (attr: string, val: string, content: string) => {
+        let el = document.querySelector(`meta[${attr}="${val}"]`);
+        if (!el) {
+          el = document.createElement('meta');
+          el.setAttribute(attr, val);
+          document.head.appendChild(el);
+        }
+        el.setAttribute('content', content);
+      };
+
+      setMeta('property', 'og:title', `${selectedProduct.nome} • ${formatted}`);
+      setMeta('property', 'og:description', `Por apenas ${formatted}! ${selectedProduct.descricao || ''}`);
+      if (selectedProduct.imagem) {
+        setMeta('property', 'og:image', selectedProduct.imagem);
+        setMeta('name', 'twitter:image', selectedProduct.imagem);
+      }
+    } else {
+      document.title = 'ODI SILVA COSMÉTICOS | Loja Virtual de Beleza & Cuidados';
+    }
+  }, [selectedProduct]);
 
   // Sync browser URL when opening product details
   const openProductDetails = (product: Product) => {
@@ -352,9 +384,11 @@ export const CartProvider: React.FC<{ children: React.ReactNode }> = ({ children
     setSelectedProduct(null);
     try {
       const url = new URL(window.location.href);
-      if (url.searchParams.has('produto') || url.searchParams.has('p')) {
+      if (url.searchParams.has('produto') || url.searchParams.has('p') || /^\/(?:p|produto)\//.test(url.pathname)) {
         url.searchParams.delete('produto');
         url.searchParams.delete('p');
+        const cleanPath = url.pathname.replace(/^\/(?:p|produto)\/[^/]+/, '') || '/';
+        url.pathname = cleanPath;
         window.history.replaceState({}, '', url.toString());
       }
     } catch (e) {
@@ -367,11 +401,13 @@ export const CartProvider: React.FC<{ children: React.ReactNode }> = ({ children
     const handlePopState = () => {
       try {
         const params = new URLSearchParams(window.location.search);
-        const prodParam = params.get('produto') || params.get('p');
+        const pathMatch = window.location.pathname.match(/^\/(?:p|produto)\/([^/]+)/);
+        const prodFromPath = pathMatch ? decodeURIComponent(pathMatch[1]) : null;
+        const prodParam = params.get('produto') || params.get('p') || prodFromPath;
         if (!prodParam) {
           setSelectedProduct(null);
         } else {
-          const matched = products.find((p) => p.id === prodParam || p.slug === prodParam);
+          const matched = products.find((p) => p.id === prodParam || p.slug === prodParam || p.id.toLowerCase() === prodParam.toLowerCase());
           if (matched) setSelectedProduct(matched);
         }
       } catch (e) {

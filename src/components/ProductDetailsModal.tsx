@@ -128,10 +128,35 @@ export const ProductDetailsModal: React.FC = () => {
     const shareText = getProductShareText(selectedProduct);
 
     if (typeof navigator !== 'undefined' && navigator.share) {
+      // 1. Try sharing with product image file attached if supported by device
+      try {
+        if (selectedProduct.imagem && navigator.canShare) {
+          const response = await fetch(selectedProduct.imagem, { mode: 'cors' });
+          if (response.ok) {
+            const blob = await response.blob();
+            const file = new File([blob], `${selectedProduct.slug || 'produto'}.jpg`, {
+              type: blob.type || 'image/jpeg',
+            });
+            if (navigator.canShare({ files: [file] })) {
+              await navigator.share({
+                title: `${selectedProduct.nome} • ${formatCurrency(effectivePrice)}`,
+                text: `${shareText}\n\n📸 Veja a foto e detalhes no link:\n${shareUrl}`,
+                files: [file],
+              });
+              showNotification('Produto compartilhado com foto e preço! ✨');
+              return;
+            }
+          }
+        }
+      } catch {
+        // Fallback to standard share if image fetch or file sharing fails
+      }
+
+      // 2. Standard Web Share with rich preview URL
       try {
         await navigator.share({
-          title: `${selectedProduct.nome} | Odi Silva Cosméticos`,
-          text: shareText,
+          title: `${selectedProduct.nome} • ${formatCurrency(effectivePrice)}`,
+          text: `${shareText}\n\n📸 Veja a foto e detalhes no link:\n${shareUrl}`,
           url: shareUrl,
         });
         showNotification('Produto compartilhado com sucesso! ✨');

@@ -5,6 +5,14 @@
   "outputDirectory": "dist",
   "rewrites": [
     {
+      "source": "/p/:id",
+      "destination": "/api/share?id=:id"
+    },
+    {
+      "source": "/produto/:id",
+      "destination": "/api/share?id=:id"
+    },
+    {
       "source": "/(.*)",
       "destination": "/index.html"
     }

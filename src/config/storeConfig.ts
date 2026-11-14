@@ -104,21 +104,29 @@ export function getWhatsAppInquiryUrl(customNumber?: string): string {
 }
 
 /**
- * Retorna o link direto e público para compartilhar um produto específico
+ * Retorna o link direto e público para compartilhar um produto específico.
+ * Usa a rota /p/:id que possui Open Graph com foto e preço para WhatsApp/redes sociais.
  */
 export function getProductShareUrl(product: Product): string {
   if (typeof window === 'undefined') return '';
   const origin = window.location.origin;
-  const pathname = window.location.pathname;
-  return `${origin}${pathname}?produto=${encodeURIComponent(product.id)}`;
+  return `${origin}/p/${encodeURIComponent(product.id)}`;
 }
 
 /**
- * Cria a mensagem amigável de recomendação de produto para compartilhamento
+ * Cria a mensagem amigável de recomendação de produto com destaque para o preço e desconto
  */
 export function getProductShareText(product: Product): string {
-  const price = getEffectivePrice(product);
-  return `✨ Olha esse produto que encontrei na Odi Silva Cosméticos:\n\n*${product.nome}*\nPreço: ${formatCurrency(price)}`;
+  const effectivePrice = getEffectivePrice(product);
+  const formattedPrice = formatCurrency(effectivePrice);
+
+  if (product.preco_promocional && product.preco_promocional > 0 && product.preco > product.preco_promocional) {
+    const originalPrice = formatCurrency(product.preco);
+    const discount = calculateDiscountPercentage(product.preco, product.preco_promocional);
+    return `✨ Olha esse produto incrível que encontrei na Odi Silva Cosméticos:\n\n*${product.nome}*\n💰 De ~${originalPrice}~ por apenas *${formattedPrice}* (${discount}% OFF)!`;
+  }
+
+  return `✨ Olha esse produto incrível que encontrei na Odi Silva Cosméticos:\n\n*${product.nome}*\n💰 Preço: *${formattedPrice}*`;
 }
 
 /**
@@ -126,7 +134,7 @@ export function getProductShareText(product: Product): string {
  */
 export function getWhatsAppShareUrl(product: Product): string {
   const shareUrl = getProductShareUrl(product);
-  const text = `${getProductShareText(product)}\n\nConfira todos os detalhes no link abaixo:\n${shareUrl}`;
+  const text = `${getProductShareText(product)}\n\n📸 Confira a foto e peça no link:\n${shareUrl}`;
   return `https://api.whatsapp.com/send?text=${encodeURIComponent(text)}`;
 }
 
